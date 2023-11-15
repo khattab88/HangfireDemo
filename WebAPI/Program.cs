@@ -1,4 +1,6 @@
 
+using Hangfire;
+
 namespace WebAPI
 {
     public class Program
@@ -8,6 +10,11 @@ namespace WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddHangfire(config => 
+                config.UseSimpleAssemblyNameTypeSerializer()
+                      .UseRecommendedSerializerSettings()
+                      .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddHangfireServer();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -27,8 +34,10 @@ namespace WebAPI
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            app.UseHangfireDashboard();
+            app.MapHangfireDashboard();
 
             app.Run();
         }
