@@ -42,8 +42,9 @@ namespace WebAPI
             app.UseHangfireDashboard();
             app.MapHangfireDashboard();
 
+            // Recurring Job
             // runs job At second :00 of every minute
-            RecurringJob.AddOrUpdate<IServiceManagement>(s => s.UpdateDatabase(), "0 * * ? * *");
+            RecurringJob.AddOrUpdate<IServiceManagement>(s => s.SyncData(), "0 * * ? * *");
 
             app.Run();
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models;
 using WebAPI.Services;
@@ -12,12 +13,10 @@ namespace WebAPI.Controllers
         private static List<Driver> drivers = new List<Driver>();
 
         private readonly ILogger<DriversController> _logger;
-        private readonly IServiceManagement _svc;
-
-        public DriversController(ILogger<DriversController> logger, IServiceManagement svc)
+        
+        public DriversController(ILogger<DriversController> logger)
         {
             _logger = logger;
-            _svc = svc;
         }
 
         [HttpPost]
@@ -32,6 +31,9 @@ namespace WebAPI.Controllers
             driver.Id = Guid.NewGuid();
             driver.Status = 1;
             drivers.Add(driver);
+
+            // Fire-and-Forget Job
+            var jobId = BackgroundJob.Enqueue<IServiceManagement>(s => s.SendEmail());
 
             return CreatedAtAction("GetDriver", new { driver.Id }, driver);
         }
