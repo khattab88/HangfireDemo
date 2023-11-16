@@ -1,5 +1,6 @@
 
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using WebAPI.Services;
 
 namespace WebAPI
@@ -18,6 +19,7 @@ namespace WebAPI
             builder.Services.AddHangfireServer();
 
             builder.Services.AddTransient<IServiceManagement, ServiceManagement>();
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -39,7 +41,18 @@ namespace WebAPI
 
             app.MapControllers();
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions()
+            {
+                DashboardTitle = "Hangfire Dashboard",
+                Authorization = new [] 
+                {
+                    new HangfireCustomBasicAuthenticationFilter()
+                    {
+                        User = "hangfire",
+                        Pass = "P@ssw0rd"
+                    }
+                }
+            });
             app.MapHangfireDashboard();
 
             // Recurring Job
