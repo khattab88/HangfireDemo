@@ -69,6 +69,9 @@ namespace WebAPI.Controllers
 
             driver.Status = 0;
 
+            // Recurring Job
+            RecurringJob.AddOrUpdate<IServiceManagement>(s => s.SyncData(), Cron.Hourly);
+
             return NoContent();
         }
     }
