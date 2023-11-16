@@ -48,6 +48,9 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
+            // Delayed Job
+            var jobId = BackgroundJob.Schedule<IServiceManagement>(s => s.CreateSponsor(), TimeSpan.FromSeconds(30));
+
             return Ok(driver);
         }
 
@@ -70,7 +73,7 @@ namespace WebAPI.Controllers
             driver.Status = 0;
 
             // Recurring Job
-            RecurringJob.AddOrUpdate<IServiceManagement>(s => s.SyncData(), Cron.Hourly);
+            RecurringJob.AddOrUpdate<IServiceManagement>(s => s.SyncData(), Cron.Minutely);
 
             return NoContent();
         }
