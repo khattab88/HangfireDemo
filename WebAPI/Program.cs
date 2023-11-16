@@ -1,5 +1,6 @@
 
 using Hangfire;
+using WebAPI.Services;
 
 namespace WebAPI
 {
@@ -15,6 +16,8 @@ namespace WebAPI
                       .UseRecommendedSerializerSettings()
                       .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddHangfireServer();
+
+            builder.Services.AddTransient<IServiceManagement, ServiceManagement>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
